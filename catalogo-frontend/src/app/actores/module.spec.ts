@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpClient } from '@angular/common/http';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, fakeAsync, inject, TestBed, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { environment } from 'src/environments/environment';
-import { LoggerService } from '@my/core';
+import { environment } from 'projects/sakila/src/environments/environment';
+import { LoggerService, JmaCoreModule } from '@my/core';
 import { DAOServiceMock } from '../base-code';
 import { NavigationService, NotificationService } from '../common-services';
 
-import { Contacto, ContactosDAOService, ContactosViewModelService } from './servicios.service';
+import { Actores, ActoresDAOService, ActoresViewModelService } from './servicios.service';
 import { NO_ERRORS_SCHEMA, Type } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CONTACTOS_COMPONENTES } from './componente.component';
+import { ACTORES_COMPONENTES } from './componente.component';
 
-describe('Modulo Contactos', () => {
-  const apiURL = environment.apiURL + 'contactos'
+describe('Modulo Actores', () => {
+  const apiURL = environment.apiURL + 'actores'
   const dataMock = [
     { "id": 1, "tratamiento": "Sra.", "nombre": "Marline", "apellidos": "Lockton Jerrans", "telefono": "846 054 444", "email": "mjerrans0@de.vu", "sexo": "M", "nacimiento": "1973-07-09", "avatar": "https://randomuser.me/api/portraits/women/1.jpg", "conflictivo": true },
     { "id": 2, "tratamiento": "Sr.", "nombre": "Beale", "apellidos": "Knibb Koppe", "telefono": "093 804 977", "email": "bkoppe0@apache.org", "sexo": "H", "nacimiento": "1995-11-22", "avatar": "https://randomuser.me/api/portraits/men/1.jpg", "conflictivo": false },
@@ -28,12 +28,12 @@ describe('Modulo Contactos', () => {
   describe('DAOService', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule],
-        providers: [ContactosDAOService, HttpClient],
-      });
+    imports: [],
+    providers: [ActoresDAOService, HttpClient, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
     });
 
-    it('query', inject([ContactosDAOService, HttpTestingController], (dao: ContactosDAOService, httpMock: HttpTestingController) => {
+    it('query', inject([ActoresDAOService, HttpTestingController], (dao: ActoresDAOService, httpMock: HttpTestingController) => {
       dao.query().subscribe({
           next: data => {
             expect(data.length).toEqual(dataMock.length);
@@ -46,7 +46,7 @@ describe('Modulo Contactos', () => {
       httpMock.verify();
     }));
 
-    it('get', inject([ContactosDAOService, HttpTestingController], (dao: ContactosDAOService, httpMock: HttpTestingController) => {
+    it('get', inject([ActoresDAOService, HttpTestingController], (dao: ActoresDAOService, httpMock: HttpTestingController) => {
       dao.get(1).subscribe({
           next: data => {
             expect(data).toEqual(dataMock[0]);
@@ -59,8 +59,8 @@ describe('Modulo Contactos', () => {
       httpMock.verify();
     }));
 
-    it('add', inject([ContactosDAOService, HttpTestingController], (dao: ContactosDAOService, httpMock: HttpTestingController) => {
-      const item = {...dataAddMock} as Contacto;
+    it('add', inject([ActoresDAOService, HttpTestingController], (dao: ActoresDAOService, httpMock: HttpTestingController) => {
+      const item = { ...dataAddMock };
       dao.add(item).subscribe();
       const req = httpMock.expectOne(`${apiURL}`);
       expect(req.request.method).toEqual('POST');
@@ -72,8 +72,8 @@ describe('Modulo Contactos', () => {
       httpMock.verify();
     }));
 
-    it('change', inject([ContactosDAOService, HttpTestingController], (dao: ContactosDAOService, httpMock: HttpTestingController) => {
-      const item = { ...dataEditMock } as Contacto;
+    it('change', inject([ActoresDAOService, HttpTestingController], (dao: ActoresDAOService, httpMock: HttpTestingController) => {
+      const item = { ...dataEditMock };
       dao.change(1, item).subscribe();
       const req = httpMock.expectOne(`${apiURL}/1`);
       expect(req.request.method).toEqual('PUT');
@@ -85,7 +85,7 @@ describe('Modulo Contactos', () => {
       httpMock.verify();
     }));
 
-    it('delete', inject([ContactosDAOService, HttpTestingController], (dao: ContactosDAOService, httpMock: HttpTestingController) => {
+    it('delete', inject([ActoresDAOService, HttpTestingController], (dao: ActoresDAOService, httpMock: HttpTestingController) => {
       dao.remove(1).subscribe();
       const req = httpMock.expectOne(`${apiURL}/1`);
       expect(req.request.method).toEqual('DELETE');
@@ -94,20 +94,19 @@ describe('Modulo Contactos', () => {
 
   });
   describe('ViewModelService', () => {
-    let service: ContactosViewModelService;
-    let dao: ContactosDAOService;
+    let service: ActoresViewModelService;
+    let dao: ActoresDAOService;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule, RouterTestingModule],
-        providers: [NotificationService, LoggerService,
-          {
-            provide: ContactosDAOService, useFactory: () => new DAOServiceMock<Contacto, number>([...dataMock])
-          }
-        ],
-      });
-      service = TestBed.inject(ContactosViewModelService);
-      dao = TestBed.inject(ContactosDAOService);
+    imports: [RouterTestingModule],
+    providers: [NotificationService, LoggerService,
+        {
+            provide: ActoresDAOService, useFactory: () => new DAOServiceMock<Actores, number>([...dataMock])
+        }, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
+      service = TestBed.inject(ActoresViewModelService);
+      dao = TestBed.inject(ActoresDAOService);
     });
 
     it('should be created', () => {
@@ -124,7 +123,7 @@ describe('Modulo Contactos', () => {
 
       it('add', () => {
         service.add()
-        expect(service.Elemento).withContext('Verify Elemento').toEqual(new Contacto())
+        expect(service.Elemento).withContext('Verify Elemento').toEqual({})
         expect(service.Modo).withContext('Verify Modo is add').toBe('add')
       })
 
@@ -202,7 +201,7 @@ describe('Modulo Contactos', () => {
       spyOn(navigation, 'back')
       service.edit(2)
       tick()
-      expect(service.Elemento).withContext('Verifica fase de preparación').toBeDefined()
+      expect(service.Elemento).withContext('Verifica fase de preparación').not.toEqual({})
       service.cancel()
       expect(service.Elemento).withContext('Verify Elemento').toEqual({})
       expect(navigation.back).toHaveBeenCalled()
@@ -214,17 +213,14 @@ describe('Modulo Contactos', () => {
           spyOn(service, 'cancel')
           service.add()
           tick()
-          expect(service.Elemento).toBeDefined()
-          const ele = new Contacto() as any;
           for (const key in dataAddMock) {
-            service.Elemento![key] = dataAddMock[key];
-            ele[key] = dataAddMock[key];
+            service.Elemento[key] = dataAddMock[key];
           }
           service.send()
           tick()
           const listado = (dao as { [i: string]: any })['listado']
           expect(listado.length).toBe(dataMock.length + 1)
-          expect(listado[listado.length - 1]).toEqual(ele)
+          expect(listado[listado.length - 1]).toEqual(dataAddMock)
           expect(service.cancel).withContext('Verify init ViewModel').toHaveBeenCalled()
         }))
         it('KO', fakeAsync(() => {
@@ -232,9 +228,8 @@ describe('Modulo Contactos', () => {
           spyOn(notify, 'add')
           service.add()
           tick()
-          expect(service.Elemento).toBeDefined()
           for (const key in dataBadMock) {
-            service.Elemento![key] = dataBadMock[key];
+            service.Elemento[key] = dataBadMock[key];
           }
           service.send()
           tick()
@@ -247,9 +242,8 @@ describe('Modulo Contactos', () => {
           spyOn(service, 'cancel')
           service.edit(1)
           tick()
-          expect(service.Elemento).toBeDefined()
           for (const key in dataEditMock) {
-            service.Elemento![key] = dataEditMock[key];
+            service.Elemento[key] = dataEditMock[key];
           }
           service.send()
           tick()
@@ -263,9 +257,8 @@ describe('Modulo Contactos', () => {
           spyOn(notify, 'add')
           service.edit(1)
           tick()
-          expect(service.Elemento).toBeDefined()
           for (const key in dataBadMock) {
-            service.Elemento![key] = dataBadMock[key];
+            service.Elemento[key] = dataBadMock[key];
           }
           (dao as { [i: string]: any })['listado'].splice(0)
           service.send()
@@ -277,23 +270,22 @@ describe('Modulo Contactos', () => {
 
   });
   describe('Componentes', () => {
-    CONTACTOS_COMPONENTES.forEach(componente => {
+    ACTORES_COMPONENTES.forEach(componente => {
       describe(componente.name, () => {
         let component: any;
         let fixture: ComponentFixture<any>;
 
         beforeEach(async () => {
           await TestBed.configureTestingModule({
-                providers: [NotificationService, LoggerService, ContactosViewModelService],
-                imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, componente],
-                schemas: [NO_ERRORS_SCHEMA]
-            })
+    declarations: [componente],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [RouterTestingModule, FormsModule, JmaCoreModule],
+    providers: [NotificationService, LoggerService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+})
             .compileComponents();
         });
 
         beforeEach(() => {
-          const vm = TestBed.inject(ContactosViewModelService)
-          vm.add()
           fixture = TestBed.createComponent(componente as Type<any>);
           component = fixture.componentInstance;
           fixture.detectChanges();
