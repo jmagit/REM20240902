@@ -227,7 +227,7 @@ public class CotillaResource {
 //	Tracer tracer;
 	
 //	@PreAuthorize("hasRole('ADMINISTRADORES')")
-	@PreAuthorize("authenticated")
+//	@PreAuthorize("authenticated")
 	@SecurityRequirement(name = "bearerAuth")
 	@PostMapping(path = "/send/pelis/{id}/like")
 //	@Observed(name = "enviar.megusta", contextualName = "enviar-megusta", lowCardinalityKeyValues = {"megustaType", "pelicula"})
