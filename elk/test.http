@@ -13,3 +13,9 @@ Content-Type: application/json
     }
   }
 }
+
+###
+
+curl -k "https://elastic:microservicios@localhost:9200/blogs/_search" -H "ApiKey dHFGVnQ1RUJPUzBjNWU4ZWVMd3U6bGxaTmdoOWdUNm1vUm05ZzdMVURDdw==" -H "Content-Type: application/json"
+
+###
