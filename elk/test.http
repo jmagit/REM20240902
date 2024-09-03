@@ -1,0 +1,4 @@
+GET https://localhost:9200/
+Authorization: ApiKey dHFGVnQ1RUJPUzBjNWU4ZWVMd3U6bGxaTmdoOWdUNm1vUm05ZzdMVURDdw==
+
+
