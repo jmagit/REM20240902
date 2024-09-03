@@ -1,4 +1,16 @@
 GET https://localhost:9200/
 Authorization: ApiKey dHFGVnQ1RUJPUzBjNWU4ZWVMd3U6bGxaTmdoOWdUNm1vUm05ZzdMVURDdw==
 
+###
 
+GET https://localhost:9200/blogs/_search
+Authorization: ApiKey dHFGVnQ1RUJPUzBjNWU4ZWVMd3U6bGxaTmdoOWdUNm1vUm05ZzdMVURDdw==
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "content": "Kibana 2018"
+    }
+  }
+}
