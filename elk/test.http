@@ -3,8 +3,7 @@ Authorization: ApiKey dHFGVnQ1RUJPUzBjNWU4ZWVMd3U6bGxaTmdoOWdUNm1vUm05ZzdMVURDdw
 
 ###
 
-GET https://localhost:9200/blogs/_search
-Authorization: ApiKey dHFGVnQ1RUJPUzBjNWU4ZWVMd3U6bGxaTmdoOWdUNm1vUm05ZzdMVURDdw==
+GET https://elastic:microservicios@localhost:9200/blogs/_search
 Content-Type: application/json
 
 {
