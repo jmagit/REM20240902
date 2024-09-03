@@ -44,11 +44,9 @@ put mi-blogs
 
 put mi-blogs/_mapping
 {
-    "mappings": {
-        "properties": {
-            "tipo": {
-                "type": "keyword"
-            }
+    "properties": {
+        "tipo": {
+            "type": "keyword"
         }
     }
 }
