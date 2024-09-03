@@ -1,3 +1,4 @@
+https://elastic:microservicios@localhost:9200
 
 get /
 
@@ -13,3 +14,5 @@ GET blogs/_search
     }
   }
 }
+
+GET blogs/_doc/cP8-o5EBoBf42sC3miRT
