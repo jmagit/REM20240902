@@ -6,6 +6,55 @@ get _cat/indices
 
 get blogs/_mapping
 
+put mi-blogs
+{
+        "mappings": {
+            "properties": {
+                "@timestamp": {
+                    "type": "date"
+                },
+                "author": {
+                    "type": "keyword"
+                },
+                "category": {
+                    "type": "keyword"
+                },
+                "content": {
+                    "type": "text"
+                },
+                "locales": {
+                    "type": "keyword"
+                },
+                "publish_date": {
+                    "type": "date",
+                    "format": "iso8601"
+                },
+                "seo_title": {
+                    "type": "keyword"
+                },
+                "title": {
+                    "type": "text"
+                },
+                "url": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+
+put mi-blogs/_mapping
+{
+    "mappings": {
+        "properties": {
+            "tipo": {
+                "type": "keyword"
+            }
+        }
+    }
+}
+
+get mi-blogs
+
 GET blogs/_search?size=3
 {
   "query": {
