@@ -183,3 +183,84 @@ GET blogs/_search
   }
 }
 
+GET blogs/_search
+{
+  "query": {
+    "term": {
+      "author": "Jim Goodwin"
+    }
+  }
+}
+
+GET blogs/_search
+{
+  "query": {
+    "term": {
+      "author": {"value": "jim goodwin", "case_insensitive": true}
+    }
+  }
+}
+
+GET blogs/_search
+{
+  "query": {
+    "fuzzy": {
+      "author": {"value": "jimy goodwin", "fuzziness": 2}
+    }
+  }
+}
+GET blogs/_search
+{
+  "query": {
+    "term": {
+      "author": "Jim Goodwin"
+    }
+  }
+}
+
+GET blogs/_search?size=10
+{
+  "query": {
+    "match": {
+      "content": {"query": "Kibana Welcome 2017", "operator": "AND" }
+    }
+  }
+}
+
+GET blogs/_search?size=10
+{
+  "query": {
+    "match_phrase": {
+      "content": "Kibana related"
+    }
+  }
+}
+
+GET blogs/_search?size=10
+{
+  "query": {
+   "combined_fields" : {
+      "query":      "Welcome",
+      "fields":     [ "title", "content"]
+    }
+  }
+}
+
+GET blogs/_search?size=10
+{
+  "query": {
+    "query_string": {
+      "query": "\"Kibana project\" && -2018",
+      "default_field": "content"
+    }
+  }
+}
+
+GET blogs/_search?size=10
+{
+  "query": {
+    "query_string": {
+      "query": "content:(\"Kibana project\" && -2018) OR title:Kibana"
+    }
+  }
+}
