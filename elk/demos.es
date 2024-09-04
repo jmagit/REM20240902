@@ -310,3 +310,50 @@ GET blogs/_search?from=0&size=5
     },
     "sort": [{"publish_date":{"order":"desc"}}, "_score"]
 }
+
+GET blogs/_search?size=0
+{
+    "query": {
+        "match": {
+            "content": {"query": "Kibana 2017", "operator": "and" }
+        }
+    },
+  "aggs": {
+    "idiomas-poco-usados": { "rare_terms": { "field": "locales", "max_doc_count": 3 } },
+    "cuenta-documentos-por-autor": { 
+      "terms": { "field": "author" },
+      "aggs": {
+        "url_stats": { "string_stats": { "field": "url" } }
+      } 
+    } 
+  } 
+}
+
+GET blogs/_search?size=100
+{
+    "query": {
+        "match": {
+            "content": {"query": "Kibana 2017", "operator": "or" }
+        }
+    },
+    "collapse": { "field": "author"  }
+}
+
+GET blogs/_search?size=100
+{
+    "query": {
+        "match": {
+            "content": {"query": "Kibana 2017", "operator": "or" }
+        }
+    },
+    "highlight": {
+    "fields": {
+      "title": {
+        "pre_tags" : ["<mark>"], "post_tags" : ["</mark>"],
+        "require_field_match": false
+      },
+      "content": {}
+    }
+  }
+
+}
