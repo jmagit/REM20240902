@@ -101,11 +101,20 @@ get blogs/_mapping
 
 GET blogs/_search
 
-GET blogs/_search?size=3
+GET blogs/_search?size=10
 {
   "query": {
     "match": {
-      "content": "Kibana 2018"
+      "content": "Kibana 2017"
+    }
+  }
+}
+
+GET blogs/_search?size=10
+{
+  "query": {
+    "match": {
+      "content": "Welcome Kibana 2017"
     }
   }
 }
@@ -133,5 +142,44 @@ GET blogs/_search
 }
 
 
+GET blogs/_search
+{
+  "query": {
+    "bool": {
+        "must": [
+            {"match": { "content": "Kibana 2018" }},
+            {"wildcard": { "author": "J*" }}
+        ]
+    }
+  }
+}
 
+
+GET blogs/_search
+{
+  "query": {
+    "bool": {
+        "should": [
+            {"match": { "content": "Kibana 2018" }},
+            {"match": { "category": "Kurrently" }},
+            {"wildcard": { "author": "J*" }}
+        ],
+        "minimum_should_match": 2
+    }
+  }
+}
+
+GET blogs/_search
+{
+  "query": {
+    "bool": {
+        "filter": {"wildcard": { "author": "J*" }},
+        "should": [
+            {"match": { "content": "Kibana 2018" }},
+            {"match": { "category": "Kurrently" }}         
+        ],
+        "minimum_should_match": 1
+    }
+  }
+}
 
