@@ -495,3 +495,12 @@ GET blogs/_search/template
     "query_string": "hello kibana", "from": 0, "size": 10
   }
 }
+
+
+POST /_sql?format=txt
+{  "query": "SELECT author, title FROM blogs WHERE publish_date >= '2018-01-01'" }
+
+
+POST /_sql?format=txt
+{  "query": "SELECT author, title FROM blogs WHERE author = 'Adrien Grand'" }
+
