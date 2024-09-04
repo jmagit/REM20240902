@@ -357,3 +357,60 @@ GET blogs/_search?size=100
   }
 
 }
+
+POST _render/template
+{
+    "source": {
+        "query": {
+            "match": {
+                "content": "{{query_string}}"
+            }
+        },
+        "highlight": {
+            "fields": {
+                "title": {
+                    "pre_tags" : ["<mark>"], "post_tags" : ["</mark>"],
+                    "require_field_match": false
+                },
+                "content": {}
+            }
+        },
+        "from": "{{from}}{{^from}}0{{/from}}",
+        "size": "{{size}}{{^size}}10{{/size}}"
+    },
+    "params": {
+        "query_string": "hello world", "from": 20, "size": 10
+    }
+}
+
+PUT _scripts/search-in-content-template
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "query": {
+        "match": {
+            "content": {"query": "{{query_string}}", "operator": "and" }
+        }
+      },
+      "from": "{{from}}{{^from}}0{{/from}}", 
+      "size": "{{size}}{{^size}}10{{/size}}"
+    }
+  }
+}
+
+POST _render/template
+{
+  "id": "search-in-content-template",
+  "params": {
+    "query_string": "hello world", "from": 20, "size": 10
+  }
+}
+
+GET blogs/_search/template
+{
+  "id": "search-in-content-template",
+  "params": {
+    "query_string": "hello kibana", "from": 0, "size": 10
+  }
+}
