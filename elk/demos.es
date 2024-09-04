@@ -71,6 +71,87 @@ put mi-blogs/_mapping
     }
 }
 
+put mi-blogs/_doc/1
+{
+    "@timestamp": "2017-10-10T00:00:00.000+02:00",
+    "author": "Pepito Grillo",
+    "title": "Kibana 5.6.3 released",
+    "category": "Releases",
+    "publish_date": "2017-10-10",
+    "url": "/blog/kibana-5-6-3-released",
+    "content": " Hello, and welcome to the 5.6.3 release of Kibana!  This release of Kibana includes an important enhancement to improve the experience when importing dashboards and visualizations from pre-5.4 releases of Kibana allowing you to choose an existing index pattern for references in dashboards and visualizations. Kibana 5.6.3 is available on our and on . Please review the  for rest of the enhancements and bug fixes."
+}
+
+put mi-blogs/_create/2
+{
+    "@timestamp": "2017-10-10T00:00:00.000+02:00",
+    "author": "Jim Goodwin",
+    "title": "Kibana 5.6.3 released",
+    "category": "Releases",
+    "publish_date": "2017-10-10",
+    "url": "/blog/kibana-5-6-3-released",
+    "content": " Hello, and welcome to the 5.6.3 release of Kibana!  This release of Kibana includes an important enhancement to improve the experience when importing dashboards and visualizations from pre-5.4 releases of Kibana allowing you to choose an existing index pattern for references in dashboards and visualizations. Kibana 5.6.3 is available on our and on . Please review the  for rest of the enhancements and bug fixes."
+}
+
+put mi-blogs/_doc/3
+{
+    "@timestamp": "2017-10-10T00:00:00.000+02:00",
+    "author": "Carmelo Coton",
+    "title": "Kibana 5.6.3 released",
+    "category": "Releases",
+    "publish_date": "2017-10-10",
+    "url": "/blog/kibana-5-6-3-released",
+    "content": " Hello, and welcome to the 5.6.3 release of Kibana!  This release of Kibana includes an important enhancement to improve the experience when importing dashboards and visualizations from pre-5.4 releases of Kibana allowing you to choose an existing index pattern for references in dashboards and visualizations. Kibana 5.6.3 is available on our and on . Please review the  for rest of the enhancements and bug fixes."
+}
+
+delete mi-blogs/_doc/1
+
+get mi-blogs/_mget
+{
+    "ids" : ["1", "3"]
+}
+GET /_mget
+{
+  "docs": [
+    { "_index": "blogs", "_id": "bP8-o5EBoBf42sC3miRT" },
+    { "_index": "mi-blogs", "_id": "2" }
+  ]
+}
+
+get mi-blogs/_doc/1
+
+head mi-blogs/_doc/1
+
+POST demo/_bulk
+{ "create" : {} }
+{ "brand": "mio", "color": "red", "model": "slim" }
+{ "create" : {} }
+{ "brand": "gucci", "color": "blue", "model": "other" }
+
+get demo/_doc/lbWevJEBOS0c5e8eroBe
+
+POST demo/_update_by_query?conflicts=proceed
+{
+  "query": { "term": {"color": "black"} }
+}
+
+
+POST demo/_delete_by_query?conflicts=proceed
+{
+  "query": { "term": {"color": "blue"} }
+}
+
+post demo/_doc
+{ "brand": "gucci", "color": "black", "model": "slim" }
+
+get demo/_search
+
+get demo/_mapping
+
+delete demo
+
+get mi-blogs/_search
+
 GET blogs/_doc/cP8-o5EBoBf42sC3miRT
 
 post kk/_doc
