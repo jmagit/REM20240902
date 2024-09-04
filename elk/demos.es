@@ -8,39 +8,43 @@ get blogs/_mapping
 
 put mi-blogs
 {
-        "mappings": {
-            "properties": {
-                "@timestamp": {
-                    "type": "date"
-                },
-                "author": {
-                    "type": "keyword"
-                },
-                "category": {
-                    "type": "keyword"
-                },
-                "content": {
-                    "type": "text"
-                },
-                "locales": {
-                    "type": "keyword"
-                },
-                "publish_date": {
-                    "type": "date",
-                    "format": "iso8601"
-                },
-                "seo_title": {
-                    "type": "keyword"
-                },
-                "title": {
-                    "type": "text"
-                },
-                "url": {
-                    "type": "keyword"
-                }
+    "mappings": {
+        "properties": {
+            "@timestamp": {
+                "type": "date"
+            },
+            "author": {
+                "type": "keyword"
+            },
+            "category": {
+                "type": "keyword"
+            },
+            "content": {
+                "type": "text"
+            },
+            "locales": {
+                "type": "keyword"
+            },
+            "publish_date": {
+                "type": "date",
+                "format": "iso8601"
+            },
+            "seo_title": {
+                "type": "keyword"
+            },
+            "title": {
+                "type": "text"
+            },
+            "url": {
+                "type": "keyword"
             }
         }
     }
+}
+
+delete mi-blogs
+
+get mi-blogs/_mapping
 
 put mi-blogs/_mapping
 {
@@ -51,15 +55,20 @@ put mi-blogs/_mapping
     }
 }
 
+get mi-blogs/_mapping/field/tipo
+
 get mi-blogs
 
-GET blogs/_search?size=3
+put mi-blogs/_mapping
 {
-  "query": {
-    "match": {
-      "content": "Kibana 2018"
+    "runtime": {
+      "day_of_week": {
+        "type": "keyword",
+        "script": {
+          "source": "emit(doc['publish_date'].value.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT))"
+        }
+      }
     }
-  }
 }
 
 GET blogs/_doc/cP8-o5EBoBf42sC3miRT
@@ -92,6 +101,15 @@ get blogs/_mapping
 
 GET blogs/_search
 
+GET blogs/_search?size=3
+{
+  "query": {
+    "match": {
+      "content": "Kibana 2018"
+    }
+  }
+}
+
 GET blogs/_search
 {
   "query": {
@@ -100,4 +118,20 @@ GET blogs/_search
     }
   }
 }
+
+GET blogs/_search
+{
+  "runtime_mappings": {
+    "day_of_week": {
+      "type": "keyword",
+      "script": {
+        "source": "emit(doc['@timestamp'].value.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT))"
+      }
+    }
+  },
+    "fields": ["author","title","day_of_week"]
+}
+
+
+
 

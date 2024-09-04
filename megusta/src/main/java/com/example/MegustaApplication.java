@@ -1,5 +1,8 @@
 package com.example;
 
+import java.util.logging.Logger;
+
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -25,10 +28,16 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 )
 @SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT")
 @SpringBootApplication
-public class MegustaApplication {
+public class MegustaApplication implements CommandLineRunner {
+	private final Logger log = Logger.getLogger(getClass().getName());
 
 	public static void main(String[] args) {
 		SpringApplication.run(MegustaApplication.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		log.info("Aplicacion arrancada");
 	}
 
 }
