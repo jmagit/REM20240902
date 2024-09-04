@@ -264,3 +264,49 @@ GET blogs/_search?size=10
     }
   }
 }
+
+GET blogs/_search
+{
+  "query": {
+    "term": {
+      "author": "Jim Goodwin"
+    }
+  },
+  "sort": [{"publish_date":{"order":"desc"}}, "url"]
+}
+
+GET blogs/_search
+{
+  "query": {
+    "match": {
+      "content": {"query": "Kibana 2017", "operator": "or" }
+    }
+  },
+  "sort": [{"publish_date":{"order":"desc"}}, "_score"]
+}
+
+GET blogs/_search
+{
+    "fields": ["author","title","publish_date"],
+    "_source": false,
+    "query": {
+        "match": {
+            "content": {"query": "Kibana 2017", "operator": "or" }
+        }
+    },
+    "sort": [{"publish_date":{"order":"desc"}}, "_score"],
+    "from": 15,
+    "size": 5
+}
+
+GET blogs/_search?from=0&size=5
+{
+    "fields": ["author","title","publish_date"],
+    "_source": false,
+    "query": {
+        "match": {
+            "content": {"query": "Kibana 2017", "operator": "or" }
+        }
+    },
+    "sort": [{"publish_date":{"order":"desc"}}, "_score"]
+}
