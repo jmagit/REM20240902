@@ -2,11 +2,5 @@
 # For more information on multiple pipelines, see the documentation:
 #   https://www.elastic.co/guide/en/logstash/current/multiple-pipelines.html
 
-# - pipeline.id: main
-#   path.config: "/usr/share/logstash/pipeline"
 - pipeline.id: main
-  path.config: "/usr/share/logstash/pipeline/logstash.conf"
-- pipeline.id: fake
-  path.config: "/usr/share/logstash/pipeline/pipeline2.conf"
-- pipeline.id: spring
-  path.config: "/usr/share/logstash/pipeline/pipeline5.conf"
+  path.config: "/usr/share/logstash/pipeline"
