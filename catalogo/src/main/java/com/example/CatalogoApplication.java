@@ -1,18 +1,22 @@
 package com.example;
 
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -37,6 +41,7 @@ import jakarta.transaction.Transactional;
 @EnableFeignClients("com.example.application.proxies")
 @SpringBootApplication
 public class CatalogoApplication implements CommandLineRunner {
+	private final Logger log = Logger.getLogger(getClass().getName());
 
 	public static void main(String[] args) {
 		SpringApplication.run(CatalogoApplication.class, args);
@@ -48,9 +53,16 @@ public class CatalogoApplication implements CommandLineRunner {
     }
 
     @Bean
-    AuditEventRepository defaultAuditEventRepository() {
+    AuditEventRepository auditEventRepository() {
         return new InMemoryAuditEventRepository();
     }
+    @Bean
+    AuthenticationEventPublisher authenticationEventPublisher
+            (ApplicationEventPublisher applicationEventPublisher) {
+        return new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+    }
+//    @Autowired 
+//    private ApplicationEventPublisher publisher;
 
 //	@Autowired
 //	FilmRepository dao;
@@ -61,6 +73,8 @@ public class CatalogoApplication implements CommandLineRunner {
 	@Transactional
 	public void run(String... args) throws Exception {
 		System.err.println("Aplicación arrancada...");
+//		publisher.publishEvent("Aplicación arrancada...");
+		log.info("Aplicación arrancada...");
 //		var item = new Film(0, "Test", new Language(1), (byte)1, new BigDecimal(1.0), new BigDecimal(10.5));
 //		item.addActor(new Actor(1));
 //		item.addActor(new Actor(2));
