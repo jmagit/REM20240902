@@ -1,8 +1,11 @@
 package com.example.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,6 +33,10 @@ public class WebSecurityConfig {
 
 	@Value("${jwt.key.public}")
 	private String SECRET;
+	@Autowired
+	AuthenticationEventPublisher authenticationEventPublisher;
+	@Autowired(required = false)
+	AuditEventRepository auditEventRepository;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,7 +44,7 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf((csrf) -> csrf.disable())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterAfter(new JWTAuthorizationFilter(SECRET), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JWTAuthorizationFilter(SECRET, authenticationEventPublisher, auditEventRepository), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/error").permitAll()
 //                    .requestMatchers("/actores/v1/**").hasRole("ADMINISTRADORES")

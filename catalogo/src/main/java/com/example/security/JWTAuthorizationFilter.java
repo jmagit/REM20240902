@@ -10,11 +10,11 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,14 +26,23 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 	private final String HEADER = "Authorization";
 	private final String PREFIX = "Bearer ";
 	private String secret;
-
-	public JWTAuthorizationFilter(String secret) {
+	AuthenticationEventPublisher authenticationEventPublisher;
+	AuditEventRepository auditEventRepository;
+	
+	public JWTAuthorizationFilter(String secret, AuthenticationEventPublisher authenticationEventPublisher, AuditEventRepository auditEventRepository) {
 		super();
 		this.secret = secret;
+		this.authenticationEventPublisher = authenticationEventPublisher;
+		this.auditEventRepository = auditEventRepository;
 	}
 
 	@Override
@@ -52,10 +61,16 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 						token.getClaim("username").asString(), null, authorities);
 				SecurityContextHolder.getContext().setAuthentication(auth);
+				authenticationEventPublisher.publishAuthenticationSuccess(auth);
+				if(auditEventRepository != null) 
+					auditEventRepository.add(new AuditEvent(auth.getName(), "AUTHENTICATION_SUCCESS"));
 			}
 			chain.doFilter(request, response);
 		} catch (JWTVerificationException ex) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
+			authenticationEventPublisher.publishAuthenticationFailure(new BadCredentialsException("Invalid."), null);
+			if(auditEventRepository != null) 
+				auditEventRepository.add(new AuditEvent("anonymousUser", "AUTHENTICATION_FAILURE"));
+			response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
