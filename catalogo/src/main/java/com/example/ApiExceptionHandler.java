@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,6 +27,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+	private final Log log = LogFactory.getLog(getClass().getName());
+
 	// https://datatracker.ietf.org/doc/html/rfc7807
 	// Content-Type: application/problem+json
 	@JsonInclude(value = Include.NON_EMPTY)
@@ -129,11 +133,13 @@ public class ApiExceptionHandler {
 
 	@ExceptionHandler({ BadRequestException.class, DuplicateKeyException.class, HttpMessageNotReadableException.class })
 	public ProblemDetail badRequest(Exception exception) {
+		log.error("Bad Request exception", exception);
 		return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 
 	@ExceptionHandler({ InvalidDataException.class, MethodArgumentNotValidException.class })
 	public ProblemDetail invalidData(Exception exception) {
+		log.error("Invalid Data exception", exception);
 		var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Datos invalidos");
 		if (exception instanceof InvalidDataException ex && ex.hasErrors()) {
 //			ex.getErrors().forEach((n, v) -> problem.setProperty(n, v));
@@ -150,6 +156,7 @@ public class ApiExceptionHandler {
 
 	@ExceptionHandler({ Exception.class })
 	public ProblemDetail unknow(Exception exception) {
+		log.error("Unknow exception", exception);
 		return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 	}
 
