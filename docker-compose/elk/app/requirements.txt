@@ -2,4 +2,4 @@ elastic-apm==6.17.0
 fastapi==0.109.1
 httpx==0.24.1
 nicegui==2.9.1
-starlette==0.40.0
+starlette==0.47.2
